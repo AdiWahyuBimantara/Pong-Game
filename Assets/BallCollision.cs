@@ -9,22 +9,39 @@ public class BallCollision : MonoBehaviour
     public int speed = 30;
 
     public Rigidbody2D ball;
+
+    public Animator animtr;
     
     // Start is called before the first frame update
     void Start()
     {
         ball.velocity = new Vector2(-1,-1)*speed;
+        animtr.SetBool("IsMove", true);
     }
     void FixedUpdate()
     {
-        
+        if(ball.velocity.x > 0){ //bola bergerak ke kanan
+            ball.GetComponent<Transform>().localScale = new Vector3(1,1,1);
+        }else{
+            ball.GetComponent<Transform>().localScale = new Vector3(-1,1,1);
+            }
     }
 
-    private void OnCollisionEnter2D(Collision2D other) {
+    void OnCollisionEnter2D(Collision2D other) {
     	if(other.collider.name == "WallKanan" || other.collider.name == "WallKiri"){
-    		GetComponent<Transform>().position = new Vector2(0,0);
+    		StartCoroutine(jeda());
+    		
     	}
 
     	
+    }
+
+    IEnumerator jeda(){
+        ball.velocity = Vector2.zero;
+        animtr.SetBool("IsMove", false);
+        ball.GetComponent<Transform>().position = Vector2.zero;
+        yield return new WaitForSeconds(1); 
+        ball.velocity = new Vector2(-1,-1)*speed;
+        animtr.SetBool("IsMove", true);
     }
 }
